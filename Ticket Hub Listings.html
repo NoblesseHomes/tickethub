@@ -1,0 +1,1203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>TicketHub — Browse Events</title>
+<meta name="viewport" content="width=1440" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#04448C;
+    --navy:#10263F;
+    --bg:#F7FAFD;
+    --surface:#FFFFFF;
+    --text:#10263F;
+    --text-2:#5D738B;
+    --border:#D9E4F1;
+    --cta:#FF8A3D;
+    --cta-hover:#F1731B;
+    --success:#25B46B;
+    --warning:#F4B740;
+    --error:#E04F5F;
+    --shadow-sm: 0 1px 2px rgba(16,38,63,.04), 0 1px 1px rgba(16,38,63,.03);
+    --shadow-md: 0 2px 4px rgba(16,38,63,.04), 0 8px 24px rgba(16,38,63,.06);
+    --shadow-lg: 0 4px 8px rgba(16,38,63,.05), 0 18px 40px rgba(16,38,63,.10);
+    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-lg: 16px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    font-size:14px;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .display{font-family:"Inter Tight", "Inter", sans-serif; letter-spacing:-0.01em}
+
+  /* ---------- Header ---------- */
+  .hdr{
+    background:var(--brand);
+    color:#fff;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .hdr-inner{
+    max-width:1360px;
+    margin:0 auto;
+    padding:14px 32px;
+    display:flex;
+    align-items:center;
+    gap:40px;
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;
+    font-family:"Inter Tight",sans-serif;
+    font-weight:700;
+    font-size:20px;
+    letter-spacing:-0.015em;
+  }
+  .logo-mark{
+    width:30px;height:30px;
+    background:#fff;
+    color:var(--brand);
+    border-radius:7px;
+    display:grid;place-items:center;
+    font-weight:700;
+    font-size:15px;
+    position:relative;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);
+  }
+  .logo-mark::before, .logo-mark::after{
+    content:"";
+    position:absolute;
+    width:6px;height:6px;border-radius:50%;
+    background:var(--brand);
+    top:50%; transform:translateY(-50%);
+  }
+  .logo-mark::before{left:-3px}
+  .logo-mark::after{right:-3px}
+
+  .nav{
+    display:flex;align-items:center;gap:6px;
+    font-size:14px;
+    font-weight:500;
+  }
+  .nav a{
+    padding:8px 14px;
+    border-radius:8px;
+    color:rgba(255,255,255,.9);
+    transition:background .15s, color .15s;
+  }
+  .nav a:hover{ background:rgba(255,255,255,.10); color:#fff }
+  .nav a.active{ color:#fff; background:rgba(255,255,255,.12) }
+
+  .hdr-right{
+    margin-left:auto;
+    display:flex;align-items:center;gap:14px;
+  }
+  .icon-btn{
+    width:36px;height:36px;
+    display:grid;place-items:center;
+    border-radius:8px;
+    color:rgba(255,255,255,.85);
+    transition:background .15s;
+  }
+  .icon-btn:hover{ background:rgba(255,255,255,.10); color:#fff }
+  .icon-btn .dot{
+    position:absolute;
+    width:8px;height:8px;border-radius:50%;
+    background:var(--cta);
+    border:2px solid var(--brand);
+    margin:-12px 0 0 14px;
+  }
+
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:9px 16px;
+    border-radius:8px;
+    font-weight:600;
+    font-size:13.5px;
+    transition: background .15s, color .15s, border-color .15s, transform .05s;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-ghost-light{
+    color:#fff;
+    border:1px solid rgba(255,255,255,.30);
+  }
+  .btn-ghost-light:hover{ background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.55) }
+  .btn-primary{
+    background:var(--cta);
+    color:#fff;
+  }
+  .btn-primary:hover{ background:var(--cta-hover) }
+  .btn-outline{
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+  }
+  .btn-outline:hover{ border-color:#B7CBE2 }
+  .btn-blue{
+    background:var(--brand);
+    color:#fff;
+  }
+  .btn-blue:hover{ background:#053a78 }
+  .btn-sm{ padding:7px 11px; font-size:12.5px }
+
+  .avatar{
+    width:32px;height:32px;border-radius:50%;
+    background:linear-gradient(135deg,#9FBEDB,#3D74AC);
+    color:#fff;font-size:12px;font-weight:600;
+    display:grid;place-items:center;
+    border:2px solid rgba(255,255,255,.35);
+  }
+
+  /* ---------- Hero strip / breadcrumb ---------- */
+  .crumb{
+    max-width:1360px;
+    margin:0 auto;
+    padding:22px 32px 8px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+    flex-wrap:wrap;
+  }
+  .crumb-left{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+    flex:1 1 auto;
+  }
+  .crumb h1{
+    font-family:"Inter Tight",sans-serif;
+    font-size:30px;
+    line-height:1.2;
+    letter-spacing:-0.02em;
+    margin:0 0 8px;
+    font-weight:700;
+  }
+  .crumb-path{
+    color:var(--text-2);
+    font-size:12.5px;
+    letter-spacing:.01em;
+    margin-bottom:10px;
+  }
+  .crumb-path span{margin:0 6px}
+  .crumb-meta{
+    color:var(--text-2);
+    font-size:13.5px;
+  }
+  .crumb-meta strong{color:var(--text);font-weight:600}
+  .sort{
+    display:flex;align-items:center;gap:10px;
+    color:var(--text-2);
+    font-size:13px;
+  }
+  .sort .select{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:8px 12px;
+    border-radius:8px;
+    color:var(--text);
+    font-weight:500;
+  }
+  .view-toggle{
+    display:inline-flex;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--surface);
+    overflow:hidden;
+  }
+  .view-toggle button{
+    padding:8px 10px;
+    color:var(--text-2);
+    display:grid;place-items:center;
+  }
+  .view-toggle button.on{ background:#EEF4FB; color:var(--brand) }
+  .view-toggle button + button{ border-left:1px solid var(--border) }
+
+  /* ---------- Filter bar ---------- */
+  .filterwrap{
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+  }
+  .filter{
+    max-width:1360px;
+    margin:0 auto;
+    padding:14px 32px;
+    display:flex;align-items:center;gap:10px;
+    flex-wrap:wrap;
+  }
+  .chip{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:9px 14px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:999px;
+    font-size:13px;
+    font-weight:500;
+    color:var(--text);
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  .chip .caret{opacity:.55}
+  .chip:hover{border-color:#B7CBE2}
+  .chip.active{
+    border:1.5px solid var(--brand);
+    color:var(--brand);
+    background:#EEF4FB;
+    padding:8px 13px;
+  }
+  .chip.active .caret{opacity:.8}
+  .chip .count{
+    background:var(--brand);
+    color:#fff;
+    font-size:11px;
+    padding:1px 7px;
+    border-radius:999px;
+    font-weight:600;
+  }
+  .chip .ic{ opacity:.6 }
+  .filter .sep{
+    width:1px;height:22px;background:var(--border);
+    margin:0 4px;
+  }
+  .filter .clear{
+    color:var(--text-2);
+    font-size:13px;
+    padding:6px 10px;
+  }
+  .filter .clear:hover{ color:var(--brand) }
+  .filter-spacer{ flex:1 }
+
+  /* ---------- Filter button ---------- */
+  .btn-filter{
+    height:54px;
+    padding:0 18px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:var(--surface);
+    color:var(--text);
+    font-weight:600;
+    font-size:14px;
+    display:inline-flex;align-items:center;gap:8px;
+    position:relative;
+    transition: border-color .15s, background .15s;
+  }
+  .btn-filter:hover{ border-color:#B7CBE2 }
+  .btn-filter.active{ border-color:var(--brand); color:var(--brand); background:#EEF4FB }
+  .filter-dot{
+    display:none;
+    width:7px;height:7px;border-radius:50%;
+    background:var(--cta);
+    position:absolute;top:10px;right:10px;
+  }
+  .filter-dot.on{ display:block }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop{
+    display:none;
+    position:fixed;inset:0;
+    background:rgba(16,38,63,.38);
+    backdrop-filter:blur(3px);
+    z-index:100;
+  }
+  .modal-backdrop.open{ display:block }
+  .modal{
+    display:none;
+    position:fixed;
+    top:50%;left:50%;
+    transform:translate(-50%,-48%);
+    width:480px;
+    background:var(--surface);
+    border-radius:18px;
+    box-shadow:0 24px 64px rgba(16,38,63,.18);
+    z-index:101;
+    overflow:hidden;
+    opacity:0;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+  .modal.open{
+    display:block;
+    opacity:1;
+    transform:translate(-50%,-50%);
+  }
+  .modal-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 24px 16px;
+    border-bottom:1px solid var(--border);
+  }
+  .modal-title{
+    font-family:"Inter Tight",sans-serif;
+    font-size:17px;font-weight:700;
+    color:var(--text);
+    letter-spacing:-0.01em;
+  }
+  .modal-close{
+    width:32px;height:32px;
+    border-radius:8px;
+    display:grid;place-items:center;
+    color:var(--text-2);
+    transition:background .12s;
+  }
+  .modal-close:hover{ background:#F0F4F9 }
+  .modal-body{
+    padding:20px 24px;
+    display:flex;flex-direction:column;gap:22px;
+  }
+  .fgroup{ display:flex;flex-direction:column;gap:10px }
+  .flabel{
+    font-size:12px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.08em;
+    color:var(--text-2);
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .flabel-val{ font-weight:600;color:var(--brand);text-transform:none;letter-spacing:0 }
+  .ftags{
+    display:flex;flex-wrap:wrap;gap:7px;
+  }
+  .ftag{
+    padding:7px 13px;
+    border:1px solid var(--border);
+    border-radius:999px;
+    font-size:13px;font-weight:500;
+    color:var(--text);
+    background:var(--surface);
+    transition: border-color .12s, background .12s, color .12s;
+  }
+  .ftag:hover{ border-color:#B7CBE2 }
+  .ftag.active{
+    border-color:var(--brand);
+    color:var(--brand);
+    background:#EEF4FB;
+    font-weight:600;
+  }
+  .finput-wrap{
+    display:flex;align-items:center;gap:10px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:0 14px;
+    height:42px;
+    background:var(--bg);
+    transition: border-color .12s;
+  }
+  .finput-wrap:focus-within{ border-color:var(--brand) }
+  .finput{
+    flex:1;border:none;outline:none;background:transparent;
+    font:inherit;font-size:14px;color:var(--text);
+  }
+  .finput::placeholder{ color:#8B9EB4 }
+  .fdate-row{ display:flex;align-items:center;gap:10px }
+  .fdate-row .finput-wrap{ flex:1 }
+  .fdate-sep{ color:var(--text-2);font-size:14px }
+  .fslider-wrap{ display:flex;flex-direction:column;gap:8px }
+  .fslider{
+    width:100%;
+    -webkit-appearance:none;
+    height:4px;
+    border-radius:99px;
+    background: linear-gradient(to right, var(--brand) 50%, var(--border) 50%);
+    outline:none;
+    cursor:pointer;
+  }
+  .fslider::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--surface);
+    border:2px solid var(--brand);
+    box-shadow:0 1px 4px rgba(4,68,140,.18);
+    cursor:pointer;
+  }
+  .fslider-ticks{
+    display:flex;justify-content:space-between;
+    font-size:11px;color:var(--text-2);
+  }
+  .modal-footer{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px 20px;
+    border-top:1px solid var(--border);
+    gap:12px;
+  }
+  .modal-reset{
+    color:var(--text-2);font-size:13.5px;font-weight:500;
+    padding:8px 12px;border-radius:8px;
+  }
+  .modal-reset:hover{ color:var(--text);background:#F0F4F9 }
+  .modal-apply{
+    flex:1;
+    background:var(--brand);
+    color:#fff;
+    font-weight:600;
+    font-size:14px;
+    padding:11px 24px;
+    border-radius:10px;
+    transition:background .15s;
+  }
+  .modal-apply:hover{ background:#053a78 }
+
+  /* ---------- Search ---------- */
+  .searchwrap{
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+  }
+  .search{
+    max-width:1360px;
+    margin:0 auto;
+    padding:16px 32px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .toolbarwrap{
+    background:var(--bg);
+    border-bottom:1px solid var(--border);
+  }
+  .toolbar{
+    max-width:1360px;
+    margin:0 auto;
+    padding:10px 32px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .toolbar-sep{ width:1px;height:20px;background:var(--border) }
+  .toolbar-spacer{ flex:1 }
+
+  /* Sort */
+  .sort-wrap{ position:relative;display:flex;align-items:center;gap:8px }
+  .sort-label{ font-size:13px;color:var(--text-2) }
+  .sort-select{
+    display:inline-flex;align-items:center;gap:7px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:7px 11px;
+    font-size:13px;font-weight:500;
+    color:var(--text);
+    transition:border-color .12s;
+  }
+  .sort-select:hover{ border-color:#B7CBE2 }
+  .sort-menu{
+    display:none;
+    position:absolute;top:calc(100% + 6px);left:0;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+    box-shadow:0 8px 24px rgba(16,38,63,.10);
+    min-width:190px;
+    z-index:50;
+    overflow:hidden;
+  }
+  .sort-menu.open{ display:block }
+  .sort-menu button{
+    display:block;width:100%;
+    text-align:left;
+    padding:10px 14px;
+    font-size:13.5px;
+    color:var(--text);
+    transition:background .1s;
+  }
+  .sort-menu button:hover{ background:#F5F8FC }
+  .sort-menu button.on{ color:var(--brand);font-weight:600 }
+  .search-field{
+    flex:1;
+    display:flex;align-items:center;gap:12px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:0 16px;
+    height:54px;
+    transition: border-color .15s, box-shadow .15s, background .15s;
+  }
+  .search-field:focus-within{
+    border-color:var(--brand);
+    background:#fff;
+    box-shadow:0 0 0 4px rgba(4,68,140,.08);
+  }
+  .search-field input{
+    flex:1;
+    border:none;outline:none;background:transparent;
+    font:inherit;font-size:15.5px;
+    color:var(--text);
+    height:100%;
+  }
+  .search-field input::placeholder{ color:#8B9EB4 }
+  .search-divider{ width:1px;height:24px;background:var(--border) }
+  .search-meta{
+    color:var(--text-2);
+    font-size:12.5px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .kbd{
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size:11px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-bottom-width:1.5px;
+    border-radius:5px;
+    padding:1px 6px;
+    color:var(--text-2);
+  }
+  .search .btn-search{
+    height:54px;
+    padding:0 28px;
+    font-size:14.5px;
+    border-radius:12px;
+    background:var(--cta);
+    color:#fff;
+    font-weight:600;
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .search .btn-search:hover{ background:var(--cta-hover) }
+
+  /* ---------- Results ---------- */
+  .main{
+    max-width:1360px;
+    margin:0 auto;
+    padding:28px 32px 56px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap:22px;
+  }
+  @media (max-width: 1180px){ .grid{ grid-template-columns: repeat(4,1fr) } }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:var(--shadow-sm);
+    display:flex;flex-direction:column;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    position:relative;
+  }
+  .card:hover{
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-lg);
+    border-color:#C7D7EA;
+  }
+
+  .thumb{
+    aspect-ratio: 3/4;
+    position:relative;
+    overflow:hidden;
+    background:#E8EFF7;
+  }
+  .thumb svg{ display:block;width:100%;height:100%}
+  .thumb .badges{
+    position:absolute;top:10px;left:10px;
+    display:flex;gap:6px;
+  }
+  .thumb .badges-right{
+    position:absolute;top:10px;right:10px;
+    display:flex;gap:6px;
+  }
+  .pill{
+    display:inline-flex;align-items:center;gap:5px;
+    background:rgba(16,38,63,.78);
+    color:#fff;
+    backdrop-filter: blur(6px);
+    font-size:11px;
+    font-weight:600;
+    padding:4px 9px;
+    border-radius:999px;
+    letter-spacing:.01em;
+  }
+  .pill svg{display:block}
+  .pill.verified{
+    background:rgba(37,180,107,.95);
+  }
+  .pill.warning{ background:rgba(244,183,64,.95); color:#3A2A00 }
+  .pill.hot{ background:rgba(224,79,95,.95); }
+  .pill.light{
+    background:rgba(255,255,255,.92);
+    color:var(--navy);
+  }
+
+  .fav{
+    position:absolute;
+    bottom:10px;right:10px;
+    width:32px;height:32px;
+    background:rgba(255,255,255,.92);
+    border-radius:50%;
+    display:grid;place-items:center;
+    color:var(--text-2);
+    box-shadow:0 1px 2px rgba(0,0,0,.1);
+  }
+  .fav:hover{ color:var(--error) }
+
+  .card-body{
+    padding:14px 14px 12px;
+    display:flex;flex-direction:column;
+    gap:8px;
+    flex:1;
+  }
+  .meta-row{
+    display:flex;align-items:center;gap:6px;
+    color:var(--text-2);
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    font-weight:600;
+  }
+  .meta-row .dot{ width:3px;height:3px;border-radius:50%;background:#B7CBE2 }
+  .card h3{
+    font-family:"Inter Tight",sans-serif;
+    margin:0;
+    font-size:16px;
+    line-height:1.25;
+    font-weight:600;
+    color:var(--text);
+    letter-spacing:-0.005em;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .venue{
+    color:var(--text-2);
+    font-size:12.5px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .venue svg{flex-shrink:0; color:#8B9EB4}
+  .date-row{
+    display:flex;align-items:center;gap:8px;
+    color:var(--text);
+    font-size:13px;
+    font-weight:500;
+  }
+  .date-row .ic{color:var(--brand)}
+
+  .price-row{
+    border-top:1px dashed var(--border);
+    margin-top:auto;
+    padding-top:12px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:10px;
+  }
+  .price-from{
+    font-size:11px;
+    color:var(--text-2);
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    font-weight:600;
+  }
+  .price-val{
+    font-family:"Inter Tight",sans-serif;
+    font-size:19px;
+    font-weight:700;
+    color:var(--text);
+    letter-spacing:-0.01em;
+  }
+  .price-val s{
+    color:#8B9EB4;
+    font-weight:500;
+    font-size:13px;
+    margin-left:6px;
+  }
+  .tickets-left{
+    font-size:11px;
+    color:var(--text-2);
+    margin-top:2px;
+  }
+  .tickets-left b{ color:var(--error); font-weight:600 }
+
+  .card .cta{
+    background:var(--brand);
+    color:#fff;
+    font-size:12.5px;
+    font-weight:600;
+    padding:8px 12px;
+    border-radius:8px;
+    display:inline-flex;align-items:center;gap:6px;
+    transition:background .15s;
+  }
+  .card .cta:hover{ background:#053a78 }
+
+  /* category-tinted placeholder thumbs */
+  .thumb-music{ background: linear-gradient(135deg, #1B3A6B, #04448C 60%, #2A6FAE); }
+  .thumb-sports{ background: linear-gradient(135deg, #16513A, #1F8155 70%); }
+  .thumb-theater{ background: linear-gradient(135deg, #3D1C5C, #6D3AA8 70%); }
+  .thumb-comedy{ background: linear-gradient(135deg, #7A3A0B, #D97324 70%); }
+  .thumb-festival{ background: linear-gradient(135deg, #0F3551, #1F6FA3 50%, #25B46B); }
+  .thumb-classical{ background: linear-gradient(135deg, #2E2317, #6E5024 70%); }
+  .thumb-family{ background: linear-gradient(135deg, #8B2B45, #E04F5F 70%); }
+  .thumb-art{ background: linear-gradient(135deg, #0E2B47, #345E84 70%); }
+  .thumb-tech{ background: linear-gradient(135deg, #0a1f33, #143452 70%); }
+  .thumb-broadway{ background: linear-gradient(135deg, #4B0A1A, #A82742 70%); }
+
+  .thumb-overlay{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:10px;
+    color:#fff;
+    pointer-events:none;
+  }
+  .thumb-overlay .cat{
+    display:inline-block;
+    align-self:flex-start;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    font-weight:700;
+    background:rgba(0,0,0,.46);
+    backdrop-filter:blur(4px);
+    padding:3px 8px;
+    border-radius:5px;
+  }
+  .thumb-pattern{
+    position:absolute;inset:0;
+    opacity:.18;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255,255,255,.5) 0 1px, transparent 1px 14px);
+  }
+  .thumb-glow{
+    position:absolute;inset:0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), transparent 55%);
+  }
+
+  /* ---------- Pagination ---------- */
+  .pag{
+    margin-top:36px;
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    flex-wrap:wrap;
+  }
+  .pag-info{ color:var(--text-2); font-size:13px }
+  .pag-info b{ color:var(--text); font-weight:600 }
+  .pages{
+    display:flex;align-items:center;gap:6px;
+  }
+  .pages button{
+    min-width:36px;height:36px;
+    padding:0 10px;
+    border-radius:8px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-weight:500;
+    font-size:13px;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .pages button:hover{ border-color:#B7CBE2 }
+  .pages button.on{
+    background:var(--brand);
+    border-color:var(--brand);
+    color:#fff;
+  }
+  .pages button.ghost{ border-color:transparent; background:transparent; color:var(--text-2) }
+  .pages .ellipsis{ color:var(--text-2); padding:0 4px }
+
+  /* ---------- Footer ---------- */
+  .footer{
+    background:var(--navy);
+    color:#B7C4D6;
+    margin-top:48px;
+  }
+  .foot-inner{
+    max-width:1360px;
+    margin:0 auto;
+    padding:44px 32px 28px;
+    display:grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+    gap:48px;
+  }
+  .foot h4{
+    color:#fff;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    margin:0 0 14px;
+    font-weight:600;
+  }
+  .foot ul{ list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px;font-size:13.5px}
+  .foot a:hover{ color:#fff }
+  .foot-brand p{
+    color:#8FA1BC;
+    font-size:13px;
+    line-height:1.55;
+    margin:14px 0 18px;
+    max-width:280px;
+  }
+  .socials{ display:flex;gap:8px }
+  .socials a{
+    width:34px;height:34px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:8px;
+    display:grid;place-items:center;
+    color:#B7C4D6;
+  }
+  .socials a:hover{ background:rgba(255,255,255,.06);color:#fff;border-color:rgba(255,255,255,.30) }
+  .newsletter{
+    display:flex;gap:6px;
+    margin-top:8px;
+  }
+  .newsletter input{
+    flex:1;
+    border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.04);
+    color:#fff;
+    padding:9px 12px;
+    border-radius:8px;
+    font:inherit;font-size:13px;
+    outline:none;
+  }
+  .newsletter input::placeholder{ color:#7C8DA8 }
+  .newsletter input:focus{ border-color:rgba(255,255,255,.32) }
+  .newsletter button{
+    background:var(--cta);
+    color:#fff;
+    border-radius:8px;
+    font-weight:600;
+    font-size:13px;
+    padding:0 14px;
+  }
+  .newsletter button:hover{ background:var(--cta-hover) }
+  .foot-bottom{
+    border-top:1px solid rgba(255,255,255,.08);
+    max-width:1360px;
+    margin:0 auto;
+    padding:18px 32px;
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    font-size:12.5px;
+    color:#7C8DA8;
+    flex-wrap:wrap;
+  }
+  .foot-bottom .legal{ display:flex;gap:18px }
+
+</style>
+</head>
+<body>
+
+<!-- ============== HEADER ============== -->
+<header class="hdr">
+  <div class="hdr-inner">
+    <a class="logo" href="#">
+      <span class="logo-mark">T</span>
+      <span>TicketHub</span>
+    </a>
+
+
+  </div>
+</header>
+
+<!-- ============== SEARCH ============== -->
+<div class="searchwrap">
+  <div class="search">
+    <div class="search-field">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#5D738B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search events, artists, venues…" value="" />
+    </div>
+    <button class="btn-filter" id="btnFilter" onclick="openModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 21 6 14 14 14 20 10 20 10 14 3 6"/></svg>
+      Filters
+      <span class="filter-dot" id="filterDot"></span>
+    </button>
+    <button class="btn-search">
+      Search
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ============== TOOLBAR ============== -->
+<div class="toolbarwrap">
+  <div class="toolbar">
+    <div class="sort-wrap">
+      <span class="sort-label">Sort</span>
+      <button class="sort-select" id="sortBtn" onclick="toggleSort()">
+        <span id="sortVal">Recommended</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="sort-menu" id="sortMenu">
+        <button onclick="pickSort('Recommended')">Recommended</button>
+        <button onclick="pickSort('Price: low to high')">Price: low to high</button>
+        <button onclick="pickSort('Price: high to low')">Price: high to low</button>
+        <button onclick="pickSort('Date: soonest')">Date: soonest</button>
+      </div>
+    </div>
+    <div class="toolbar-spacer"></div>
+    <div class="view-toggle" role="tablist">
+      <button class="on" id="vgrid" aria-label="Grid view" onclick="setView('grid')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+      <button id="vlist" aria-label="List view" onclick="setView('list')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== FILTER MODAL ============== -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
+<div class="modal" id="filterModal" role="dialog" aria-label="Filters">
+  <div class="modal-header">
+    <span class="modal-title">Filters</span>
+    <button class="modal-close" onclick="closeModal()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="fgroup">
+      <label class="flabel">Event type</label>
+      <div class="ftags">
+        <button class="ftag active">Concerts</button>
+        <button class="ftag">Sports</button>
+        <button class="ftag">Theater</button>
+        <button class="ftag">Comedy</button>
+        <button class="ftag">Festival</button>
+        <button class="ftag">Classical</button>
+        <button class="ftag">Family</button>
+        <button class="ftag">Exhibition</button>
+      </div>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Location</label>
+      <div class="finput-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B9EB4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 7-8 12-8 12s-8-5-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <input type="text" class="finput" placeholder="City or venue" value="New York" />
+      </div>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Date</label>
+      <div class="fdate-row">
+        <div class="finput-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B9EB4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <input type="text" class="finput" placeholder="From" value="May 15" />
+        </div>
+        <span class="fdate-sep">—</span>
+        <div class="finput-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B9EB4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <input type="text" class="finput" placeholder="To" value="May 17" />
+        </div>
+      </div>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Price <span class="flabel-val" id="priceLabel">$0 – $250</span></label>
+      <div class="fslider-wrap">
+        <input type="range" class="fslider" min="0" max="500" value="250" id="priceSlider"
+          oninput="document.getElementById('priceLabel').textContent='$0 – $'+this.value" />
+        <div class="fslider-ticks">
+          <span>$0</span><span>$125</span><span>$250</span><span>$375</span><span>$500+</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="modal-reset" onclick="closeModal()">Reset all</button>
+    <button class="modal-apply" onclick="closeModal()">Apply filters</button>
+  </div>
+</div>
+
+<!-- ============== MAIN GRID ============== -->
+<main class="main">
+  <div class="grid" id="grid"></div>
+
+  <!-- Pagination -->
+  <div class="pag">
+    <div class="pag-info">Showing <b>1–20</b> of <b>3,481</b> events</div>
+    <div class="pages">
+      <button class="ghost" aria-label="Previous">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Prev
+      </button>
+      <button class="on">1</button>
+      <button>2</button>
+      <button>3</button>
+      <button>4</button>
+      <span class="ellipsis">…</span>
+      <button>174</button>
+      <button class="ghost">
+        Next
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- ============== FOOTER ============== -->
+<footer class="footer">
+  <div class="foot-inner foot">
+    <div class="foot-brand">
+      <div class="logo" style="color:#fff">
+        <span class="logo-mark" style="background:#fff;color:var(--brand)">T</span>
+        <span>TicketHub</span>
+      </div>
+      <p>The trusted marketplace for live events. Every ticket is verified and backed by our buyer guarantee.</p>
+      <div class="socials">
+        <a href="#" aria-label="Twitter"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.92a8.2 8.2 0 0 1-2.36.65 4.12 4.12 0 0 0 1.8-2.27 8.22 8.22 0 0 1-2.6 1A4.1 4.1 0 0 0 11.85 9.1 11.65 11.65 0 0 1 3.39 4.8a4.1 4.1 0 0 0 1.27 5.48A4.07 4.07 0 0 1 2.8 9.76v.05a4.11 4.11 0 0 0 3.29 4.02 4.13 4.13 0 0 1-1.85.07 4.11 4.11 0 0 0 3.83 2.85A8.24 8.24 0 0 1 2 18.4a11.62 11.62 0 0 0 6.29 1.84c7.55 0 11.68-6.25 11.68-11.67l-.01-.53A8.18 8.18 0 0 0 22 5.92z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M13 22v-8h3l1-4h-4V7.5c0-1.16.32-2 2-2H17V2.14C16.66 2.1 15.6 2 14.4 2 11.84 2 10 3.56 10 6.7V10H7v4h3v8h3z"/></svg></a>
+        <a href="#" aria-label="YouTube"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.94 2C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58zM9.75 15.5v-7L15.82 12z"/></svg></a>
+      </div>
+    </div>
+
+    <div>
+      <h4>Links</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Help center</a></li>
+        <li><a href="#">Contact us</a></li>
+        <li><a href="#">Buyer guarantee</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Terms of service</a></li>
+        <li><a href="#">Privacy policy</a></li>
+        <li><a href="#">Refund policy</a></li>
+        <li><a href="#">Cookies</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Stay in the loop</h4>
+      <p style="margin:0 0 10px;color:#8FA1BC;font-size:13px">Weekly drops, presale alerts, no spam.</p>
+      <form class="newsletter" onsubmit="event.preventDefault()">
+        <input type="email" placeholder="you@email.com" />
+        <button type="submit">Join</button>
+      </form>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <div>&copy; 2026 TicketHub, Inc. All rights reserved.</div>
+    <div class="legal">
+      <a href="#">FAQ</a>
+      <a href="#">Accessibility</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function openModal(){
+    document.getElementById('modalBackdrop').classList.add('open');
+    const m = document.getElementById('filterModal');
+    m.style.display = 'block';
+    requestAnimationFrame(()=> m.classList.add('open'));
+    document.getElementById('btnFilter').classList.add('active');
+  }
+  function closeModal(){
+    const m = document.getElementById('filterModal');
+    m.classList.remove('open');
+    document.getElementById('modalBackdrop').classList.remove('open');
+    document.getElementById('btnFilter').classList.remove('active');
+    setTimeout(()=>{ m.style.display='none' }, 180);
+  }
+  function setView(v){
+    document.getElementById('vgrid').classList.toggle('on', v==='grid');
+    document.getElementById('vlist').classList.toggle('on', v==='list');
+  }
+  function toggleSort(){
+    document.getElementById('sortMenu').classList.toggle('open');
+  }
+  function pickSort(val){
+    document.getElementById('sortVal').textContent = val;
+    document.getElementById('sortMenu').classList.remove('open');
+    document.querySelectorAll('.sort-menu button').forEach(b=>{
+      b.classList.toggle('on', b.textContent === val);
+    });
+  }
+  document.addEventListener('click', e=>{
+    if(!e.target.closest('.sort-wrap')) document.getElementById('sortMenu').classList.remove('open');
+    if(e.target.classList.contains('ftag')){
+      e.target.classList.toggle('active');
+      const anyActive = document.querySelectorAll('.ftag.active').length > 0;
+      document.getElementById('filterDot').classList.toggle('on', anyActive);
+    }
+  });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeModal(); document.getElementById('sortMenu').classList.remove('open'); } });
+  const sl = document.getElementById('priceSlider');
+  if(sl) sl.addEventListener('input', ()=>{
+    const pct = sl.value / sl.max * 100;
+    sl.style.background = `linear-gradient(to right, var(--brand) ${pct}%, var(--border) ${pct}%)`;
+  });
+
+  const events = [
+    { cat:"music",     category:"Concert · Pop",        title:"Aurora Vance — World Tour 2026",      venue:"Madison Square Garden", city:"New York, NY",  date:"Fri · May 15 · 8:00 PM", price:89,  was:120, left:42, badges:["verified","hot"] },
+    { cat:"sports",    category:"NBA Playoffs",         title:"Knicks vs. Celtics — Game 5",          venue:"Madison Square Garden", city:"New York, NY",  date:"Sat · May 16 · 7:30 PM", price:215, was:null, left:11, badges:["verified","low"] },
+    { cat:"theater",   category:"Broadway",             title:"Hamlet — A Reimagining",               venue:"Lyceum Theatre",        city:"New York, NY",  date:"Sun · May 17 · 2:00 PM", price:74,  was:null, left:160, badges:["verified"] },
+    { cat:"comedy",    category:"Stand-up",             title:"Nate Calloway — Funny Hour Live",      venue:"Beacon Theatre",        city:"New York, NY",  date:"Fri · May 15 · 9:00 PM", price:58,  was:75,  left:90, badges:["verified"] },
+    { cat:"festival",  category:"Festival",             title:"Harborlights Music Festival",          venue:"Liberty State Park",    city:"Jersey City, NJ", date:"Sat · May 16 · All day", price:165, was:null, left:300, badges:["verified","new"] },
+    { cat:"classical", category:"Classical",            title:"NY Philharmonic — Mahler No. 5",       venue:"David Geffen Hall",     city:"New York, NY",  date:"Thu · May 22 · 7:00 PM", price:96,  was:null, left:54, badges:["verified"] },
+    { cat:"sports",    category:"MLB Regular Season",   title:"Yankees vs. Red Sox",                  venue:"Yankee Stadium",        city:"Bronx, NY",     date:"Sat · May 23 · 1:05 PM", price:42,  was:null, left:520, badges:["verified"] },
+    { cat:"music",     category:"Concert · Rock",       title:"The Mercury Static — Reunion Night",   venue:"Brooklyn Steel",        city:"Brooklyn, NY",  date:"Sat · May 23 · 8:30 PM", price:78,  was:null, left:18, badges:["verified","low"] },
+    { cat:"family",    category:"Family · Live",        title:"Disney on Ice — Magical Moments",      venue:"Barclays Center",       city:"Brooklyn, NY",  date:"Sun · May 24 · 1:00 PM", price:39,  was:null, left:430, badges:["verified"] },
+    { cat:"broadway",  category:"Musical",              title:"Wicked — The Untold Story",            venue:"Gershwin Theatre",      city:"New York, NY",  date:"Wed · May 27 · 7:00 PM", price:128, was:160, left:21, badges:["verified","low"] },
+    { cat:"theater",   category:"Drama",                title:"A Streetcar Named Desire",             venue:"BAM Harvey Theater",    city:"Brooklyn, NY",  date:"Fri · May 29 · 7:30 PM", price:65,  was:null, left:75, badges:["verified"] },
+    { cat:"music",     category:"Concert · Indie",      title:"Pale Mornings — North American Tour",  venue:"Webster Hall",          city:"New York, NY",  date:"Sat · May 30 · 8:00 PM", price:54,  was:null, left:60, badges:["verified"] },
+    { cat:"art",       category:"Exhibition",           title:"Light & Form — Studio Lecture",        venue:"The Whitney Museum",    city:"New York, NY",  date:"Sun · May 31 · 3:00 PM", price:28,  was:null, left:200, badges:["verified","new"] },
+    { cat:"tech",      category:"Conference",           title:"FutureStack 2026 — Day Pass",          venue:"Javits Center",         city:"New York, NY",  date:"Tue · Jun 02 · 9:00 AM", price:295, was:null, left:140, badges:["verified"] },
+    { cat:"sports",    category:"MLS Soccer",           title:"NYCFC vs. Inter Miami",                venue:"Yankee Stadium",        city:"Bronx, NY",     date:"Sat · Jun 06 · 7:00 PM", price:88,  was:null, left:33, badges:["verified","hot"] },
+    { cat:"music",     category:"Concert · R&B",        title:"Sasha Lemoine — Velvet Tour",          venue:"Radio City Music Hall", city:"New York, NY",  date:"Fri · Jun 12 · 8:00 PM", price:112, was:140, left:24, badges:["verified","low"] },
+    { cat:"comedy",    category:"Stand-up",             title:"Dani Park — Mid-Career Crisis",        venue:"Caroline's on Broadway",city:"New York, NY",  date:"Sat · Jun 13 · 10:00 PM", price:45, was:null, left:80, badges:["verified"] },
+    { cat:"festival",  category:"Food & Music",         title:"East Village Block Party",             venue:"Tompkins Square Park",  city:"New York, NY",  date:"Sat · Jun 13 · 12:00 PM", price:25, was:null, left:600, badges:["new"] },
+    { cat:"classical", category:"Opera",                title:"La Bohème — Met Opera",                venue:"Metropolitan Opera",    city:"New York, NY",  date:"Wed · Jun 17 · 7:30 PM", price:185, was:null, left:46, badges:["verified"] },
+    { cat:"music",     category:"Concert · Pop",        title:"Cardinal Hour — Summer Showcase",      venue:"Forest Hills Stadium",  city:"Queens, NY",    date:"Sat · Jun 20 · 7:30 PM", price:69,  was:null, left:95, badges:["verified"] }
+  ];
+
+  // simple glyph per category drawn into the placeholder
+  const glyphs = {
+    music:     '<path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+    sports:    '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3v18M5 5l14 14M19 5L5 19"/>',
+    theater:   '<path d="M3 7c0 7 4 11 9 11s9-4 9-11"/><circle cx="9" cy="10" r="1.2" fill="currentColor"/><circle cx="15" cy="10" r="1.2" fill="currentColor"/>',
+    comedy:    '<circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>',
+    festival:  '<path d="M3 20h18M6 20l6-14 6 14M9 14h6"/>',
+    classical: '<path d="M4 4h16v4H4zM6 8v12M18 8v12M9 12h6M9 16h6"/>',
+    family:    '<circle cx="9" cy="9" r="2.5"/><circle cx="16" cy="10" r="2"/><path d="M3 21c0-3 3-5 6-5s6 2 6 5M14 21c0-2 2-4 5-4"/>',
+    art:       '<rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.5" fill="currentColor"/><path d="M21 16l-5-5L8 18"/>',
+    tech:      '<rect x="3" y="4" width="18" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+    broadway:  '<path d="M12 2l2.6 5.3 5.9.9-4.3 4.1 1 5.7L12 15.3 6.8 18l1-5.7L3.5 8.2l5.9-.9z"/>'
+  };
+
+  const badgeMap = {
+    verified: { cls:'verified',icon:'<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>', label:'Verified' },
+    hot:      { cls:'hot',     icon:'<svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 2c.5 4 4.5 5 4.5 9.5 0 3.5-2.7 6.5-6 6.5s-6-2.7-6-6c0-2 1-3.5 2.5-4.5C7 9.5 8 7 8 5c2 1.5 3 3 3 5 1.5-1.5 2.5-4 2.5-8z"/></svg>', label:'Trending' },
+    low:      { cls:'warning', icon:'',   label:'Few left' },
+    new:      { cls:'light',   icon:'',   label:'New' }
+  };
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = events.map(e => {
+      return `
+    <article class="card">
+      <div class="thumb thumb-${e.cat}">
+        <div class="thumb-pattern"></div>
+        <div class="thumb-glow"></div>
+        <svg viewBox="0 0 24 24" style="position:absolute;width:62%;height:62%;left:50%;top:46%;transform:translate(-50%,-50%);color:rgba(255,255,255,.16)" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          ${glyphs[e.cat] || glyphs.music}
+        </svg>
+        <div class="thumb-overlay">
+          <div class="cat">${e.category}</div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="date-row">
+          <svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${e.date}
+        </div>
+        <h3>${e.title}</h3>
+        <div class="venue">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 7-8 12-8 12s-8-5-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          ${e.venue}
+        </div>
+
+        <div class="price-row">
+          <div>
+            <div class="price-from">From</div>
+            <div class="price-val">$${e.price}</div>
+          </div>
+          <button class="cta">
+            View
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+</script>
+</body>
+</html>
