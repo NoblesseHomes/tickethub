@@ -22,7 +22,6 @@ model Event {
   description     String?
   entranceFee     String?
   detailsUrl      String?
-  photoKey        String?
   themes          String[]
   genres          String[]
   types           String[]
@@ -31,6 +30,7 @@ model Event {
   updatedAt       DateTime @updatedAt
 
   place           Place?   @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  media           Media?
 
   @@index([startAt])
   @@index([placeId, startAt])
@@ -52,4 +52,18 @@ model Place {
 
   @@index([city])
   @@index([latitude, longitude])
+}
+
+model Media {
+  id        Int      @id @default(autoincrement())
+  eventId   Int      @unique
+  sourceUrl String
+  s3Url     String?
+  s3Key     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
 }

@@ -20,7 +20,9 @@ function extractEvents(body) {
 
 // Удаляет дубликаты и отбрасывает пустые/некорректные значения.
 function uniqueStrings(values) {
-  return [...new Set(values.filter((v) => typeof v === "string" && v.trim() !== ""))];
+  return [
+    ...new Set(values.filter((v) => typeof v === "string" && v.trim() !== "")),
+  ];
 }
 
 // Упрощает classification до массивов строк для хранения в Event.
@@ -29,25 +31,30 @@ function extractClassification(payload) {
     (payload.classification?.themes || []).map((theme) => theme?.name),
   );
   const genres = uniqueStrings(
-    (payload.classification?.themes || []).flatMap((theme) => theme?.genres || []),
+    (payload.classification?.themes || []).flatMap(
+      (theme) => theme?.genres || [],
+    ),
   );
   const types = uniqueStrings(payload.classification?.types || []);
   return { themes, genres, types };
 }
 
-// Берет приоритетное фото (normalized) и сохраняет только имя файла (формат ключа S3).
-function extractPhotoKey(payload) {
+function extractSourceUrl(payload) {
   const photos = Array.isArray(payload.photos) ? payload.photos : [];
-  const normalized = photos.find((photo) => photo?.type === "normalized");
-  const fallback = photos[0];
-  const rawUrl = normalized?.url || fallback?.url;
-  if (!rawUrl) return null;
+  const original = photos.find((photo) => photo?.type === "original");
+  return original?.url || null;
+}
+
+// Возвращает имя файла постера из URL (можно использовать позже как S3 key).
+function extractPhotoFileName(payload) {
+  const sourceUrl = extractSourceUrl(payload);
+  if (!sourceUrl) return null;
 
   try {
-    const pathname = new URL(rawUrl).pathname;
+    const pathname = new URL(sourceUrl).pathname;
     return pathname.split("/").pop() || null;
   } catch {
-    return rawUrl.split("/").pop() || null;
+    return sourceUrl.split("/").pop() || null;
   }
 }
 
@@ -62,7 +69,8 @@ export async function POST(req) {
         {
           ok: false,
           error: "Event payload not found. Expected event object or events[].",
-          receivedKeys: body && typeof body === "object" ? Object.keys(body) : [],
+          receivedKeys:
+            body && typeof body === "object" ? Object.keys(body) : [],
         },
         { status: 400 },
       );
@@ -92,8 +100,8 @@ export async function POST(req) {
         // 2) upsert события с упрощенной classification
         const event = await prisma.$transaction(
           async (tx) => {
+            // 1) Сначала Place (Event хранит placeId).
             let placeId = null;
-
             if (payload.place?.id) {
               const place = await tx.place.upsert({
                 where: { externalId: payload.place.id },
@@ -116,8 +124,8 @@ export async function POST(req) {
               placeId = place.id;
             }
 
-            // Идемпотентная запись по externalId: сначала create, потом update при повторной отправке.
-            return tx.event.upsert({
+            // 2) Затем Event с placeId.
+            const upsertedEvent = await tx.event.upsert({
               where: { externalId: payload.id },
               create: {
                 externalId: payload.id,
@@ -128,7 +136,6 @@ export async function POST(req) {
                 description: payload.description?.text ?? null,
                 entranceFee: payload.details?.entrance_fee ?? null,
                 detailsUrl: payload.details?.url ?? null,
-                photoKey: extractPhotoKey(payload),
                 themes: classification.themes,
                 genres: classification.genres,
                 types: classification.types,
@@ -142,13 +149,29 @@ export async function POST(req) {
                 description: payload.description?.text ?? null,
                 entranceFee: payload.details?.entrance_fee ?? null,
                 detailsUrl: payload.details?.url ?? null,
-                photoKey: extractPhotoKey(payload),
                 themes: classification.themes,
                 genres: classification.genres,
                 types: classification.types,
                 placeId,
               },
             });
+
+            // 3) Потом Media (Media хранит eventId).
+            const sourceUrl = extractSourceUrl(payload);
+            if (sourceUrl) {
+              await tx.media.upsert({
+                where: { eventId: upsertedEvent.id },
+                create: {
+                  eventId: upsertedEvent.id,
+                  sourceUrl,
+                },
+                update: {
+                  sourceUrl,
+                },
+              });
+            }
+
+            return upsertedEvent;
           },
           { maxWait: 10000, timeout: 20000 },
         );
