@@ -23,14 +23,14 @@ model Event {
   entranceFee     String?
   detailsUrl      String?
   photoKey        String?
+  themes          String[]
+  genres          String[]
+  types           String[]
   placeId         Int?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  place           Place?             @relation(fields: [placeId], references: [id], onDelete: SetNull)
-  themes          EventTheme[]
-  genres          EventGenre[]
-  types           EventTypeOnEvent[]
+  place           Place?   @relation(fields: [placeId], references: [id], onDelete: SetNull)
 
   @@index([startAt])
   @@index([placeId, startAt])
@@ -52,66 +52,4 @@ model Place {
 
   @@index([city])
   @@index([latitude, longitude])
-}
-
-model Theme {
-  id        Int        @id @default(autoincrement())
-  name      String     @unique
-  createdAt DateTime   @default(now())
-
-  events    EventTheme[]
-}
-
-model Genre {
-  id        Int        @id @default(autoincrement())
-  name      String     @unique
-  createdAt DateTime   @default(now())
-
-  events    EventGenre[]
-
-  @@index([name])
-}
-
-model EventType {
-  id        Int              @id @default(autoincrement())
-  name      String           @unique
-  createdAt DateTime         @default(now())
-
-  events    EventTypeOnEvent[]
-}
-
-model EventTheme {
-  eventId    Int
-  themeId    Int
-  assignedAt DateTime @default(now())
-
-  event      Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  theme      Theme   @relation(fields: [themeId], references: [id], onDelete: Cascade)
-
-  @@id([eventId, themeId])
-  @@index([themeId, eventId])
-}
-
-model EventGenre {
-  eventId    Int
-  genreId    Int
-  assignedAt DateTime @default(now())
-
-  event      Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  genre      Genre   @relation(fields: [genreId], references: [id], onDelete: Cascade)
-
-  @@id([eventId, genreId])
-  @@index([genreId, eventId])
-}
-
-model EventTypeOnEvent {
-  eventId     Int
-  eventTypeId Int
-  assignedAt  DateTime @default(now())
-
-  event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventType   EventType @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
-
-  @@id([eventId, eventTypeId])
-  @@index([eventTypeId, eventId])
 }
