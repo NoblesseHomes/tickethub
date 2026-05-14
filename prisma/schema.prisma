@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Event {
+  id              Int      @id @default(autoincrement())
+  externalId      Int      @unique
+  name            String
+  bookingUrl      String?
+  facebookEventId String?
+  startAt         DateTime?
+  description     String?
+  entranceFee     String?
+  detailsUrl      String?
+  photoKey        String?
+  placeId         Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  place           Place?             @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  themes          EventTheme[]
+  genres          EventGenre[]
+  types           EventTypeOnEvent[]
+
+  @@index([startAt])
+  @@index([placeId, startAt])
+  @@index([name])
+}
+
+model Place {
+  id         Int      @id @default(autoincrement())
+  externalId Int?     @unique
+  city       String
+  company    String?
+  street     String?
+  latitude   Decimal? @db.Decimal(9, 6)
+  longitude  Decimal? @db.Decimal(9, 6)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  events     Event[]
+
+  @@index([city])
+  @@index([latitude, longitude])
+}
+
+model Theme {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+
+  events    EventTheme[]
+}
+
+model Genre {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+
+  events    EventGenre[]
+
+  @@index([name])
+}
+
+model EventType {
+  id        Int              @id @default(autoincrement())
+  name      String           @unique
+  createdAt DateTime         @default(now())
+
+  events    EventTypeOnEvent[]
+}
+
+model EventTheme {
+  eventId    Int
+  themeId    Int
+  assignedAt DateTime @default(now())
+
+  event      Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  theme      Theme   @relation(fields: [themeId], references: [id], onDelete: Cascade)
+
+  @@id([eventId, themeId])
+  @@index([themeId, eventId])
+}
+
+model EventGenre {
+  eventId    Int
+  genreId    Int
+  assignedAt DateTime @default(now())
+
+  event      Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  genre      Genre   @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([eventId, genreId])
+  @@index([genreId, eventId])
+}
+
+model EventTypeOnEvent {
+  eventId     Int
+  eventTypeId Int
+  assignedAt  DateTime @default(now())
+
+  event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventType   EventType @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
+
+  @@id([eventId, eventTypeId])
+  @@index([eventTypeId, eventId])
+}
