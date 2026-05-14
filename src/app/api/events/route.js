@@ -1,65 +1,29 @@
 import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
-
-// Преобразует дату и время из payload в единый JS Date.
-function toStartAt(dates) {
-  if (!dates?.start_date) return null;
-  const time = dates.start_time || "00:00";
-  return new Date(`${dates.start_date}T${time}:00`);
-}
-
-// Поддерживает разные форматы webhook и всегда возвращает массив событий.
-function extractEvents(body) {
-  if (Array.isArray(body?.events)) return body.events;
-  if (body?.id && body?.name) return [body];
-  if (body?.event?.id && body?.event?.name) return [body.event];
-  if (body?.data?.id && body?.data?.name) return [body.data];
-  if (body?.payload?.id && body?.payload?.name) return [body.payload];
-  return [];
-}
-
-// Удаляет дубликаты и отбрасывает пустые/некорректные значения.
-function uniqueStrings(values) {
-  return [
-    ...new Set(values.filter((v) => typeof v === "string" && v.trim() !== "")),
-  ];
-}
-
-// Упрощает classification до массивов строк для хранения в Event.
-function extractClassification(payload) {
-  const themes = uniqueStrings(
-    (payload.classification?.themes || []).map((theme) => theme?.name),
-  );
-  const genres = uniqueStrings(
-    (payload.classification?.themes || []).flatMap(
-      (theme) => theme?.genres || [],
-    ),
-  );
-  const types = uniqueStrings(payload.classification?.types || []);
-  return { themes, genres, types };
-}
-
-function extractSourceUrl(payload) {
-  const photos = Array.isArray(payload.photos) ? payload.photos : [];
-  const original = photos.find((photo) => photo?.type === "original");
-  return original?.url || null;
-}
-
-// Возвращает имя файла постера из URL (можно использовать позже как S3 key).
-function extractPhotoFileName(payload) {
-  const sourceUrl = extractSourceUrl(payload);
-  if (!sourceUrl) return null;
-
-  try {
-    const pathname = new URL(sourceUrl).pathname;
-    return pathname.split("/").pop() || null;
-  } catch {
-    return sourceUrl.split("/").pop() || null;
-  }
-}
+import {
+  extractClassification,
+  extractEvents,
+  toStartAt,
+} from "@/lib/events/payload";
+import { syncEventMedia } from "@/lib/events/media";
 
 export async function POST(req) {
   try {
+    const authHeader = req.headers.get("authorization");
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const receivedToken = authHeader.split(" ")[1];
+
+    const clientToken = process.env.WEBHOOK_TOKEN;
+
+    if (receivedToken !== clientToken) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const body = await req.json();
     const events = extractEvents(body);
 
@@ -156,20 +120,12 @@ export async function POST(req) {
               },
             });
 
-            // 3) Потом Media (Media хранит eventId).
-            const sourceUrl = extractSourceUrl(payload);
-            if (sourceUrl) {
-              await tx.media.upsert({
-                where: { eventId: upsertedEvent.id },
-                create: {
-                  eventId: upsertedEvent.id,
-                  sourceUrl,
-                },
-                update: {
-                  sourceUrl,
-                },
-              });
-            }
+            // 3) Медиа: синхронизация sourceUrl + условная загрузка в R2.
+            await syncEventMedia({
+              tx,
+              eventId: upsertedEvent.id,
+              payload,
+            });
 
             return upsertedEvent;
           },
@@ -200,6 +156,28 @@ export async function POST(req) {
     console.error("POST /api/events failed:", error);
     return NextResponse.json(
       { ok: false, error: "Failed to ingest event" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function GET() {
+  try {
+    const events = await prisma.event.findMany({
+      include: {
+        place: true,
+        media: true,
+      },
+    });
+
+    return NextResponse.json({ ok: true, events });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Failed to load events",
+        message: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 },
     );
   }
