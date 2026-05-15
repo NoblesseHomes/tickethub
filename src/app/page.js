@@ -1,5 +1,11 @@
-import Image from "next/image";
+import Filtr from "@/components/Filtr/filtr";
+import SearchInput from "@/components/SearchInput/search";
 
 export default function Home() {
-  return <h1 className="text-brand">Home</h1>;
+  return (
+    <>
+      <SearchInput />
+      <Filtr />
+    </>
+  );
 }

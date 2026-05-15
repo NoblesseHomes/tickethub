@@ -17,7 +17,7 @@ export const metadata = {
 const Header = () => {
   return (
     <header className="w-full border-b border-border bg-brand text-surface">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 w-full max-w-340 items-center justify-between px-4 sm:px-8">
         <Link href="/" className="flex items-center">
           <Image
             src="/logo.svg"
@@ -25,6 +25,7 @@ const Header = () => {
             width={196}
             height={48}
             priority
+            className="h-8 w-auto sm:h-10"
           />
         </Link>
       </div>
