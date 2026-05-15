@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { IoSearchOutline } from "react-icons/io5";
+import { IoSearchOutline, IoCloseSharp } from "react-icons/io5";
 import Skeleton from "@mui/material/Skeleton";
 
 export default function SearchInput() {
@@ -97,6 +97,16 @@ export default function SearchInput() {
               placeholder="Search events, artists, venues…"
               className="h-full flex-1 bg-transparent text-[15.5px] text-text outline-none placeholder:text-text-2"
             />
+            {input && (
+              <button
+                type="button"
+                onClick={() => setInput("")}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-text-2 transition-all duration-200 hover:bg-text-2/10 hover:text-text active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer"
+                aria-label="Clear input"
+              >
+                <IoCloseSharp className="h-6 w-6" />
+              </button>
+            )}
           </div>
 
           {inputIsFocused && (
