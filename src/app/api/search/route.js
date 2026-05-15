@@ -26,6 +26,9 @@ export async function GET(req) {
     OR: [
       { name: { contains: word, mode: "insensitive" } },
       { description: { contains: word, mode: "insensitive" } },
+      { place: { is: { street: { contains: word, mode: "insensitive" } } } },
+      { place: { is: { city: { contains: word, mode: "insensitive" } } } },
+      { place: { is: { company: { contains: word, mode: "insensitive" } } } },
     ],
   }));
 
@@ -33,6 +36,10 @@ export async function GET(req) {
     const response = await prisma.event.findMany({
       where: {
         OR: whereConditions,
+      },
+      include: {
+        place: true,
+        media: true,
       },
     });
 
