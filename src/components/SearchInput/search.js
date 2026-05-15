@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { IoArrowForward, IoSearchOutline } from "react-icons/io5";
 import Skeleton from "@mui/material/Skeleton";
 
@@ -9,6 +10,21 @@ export default function SearchInput() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const formatEventDate = (value) => {
+    if (!value) return "";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) return "";
+
+    return new Intl.DateTimeFormat("cs-CZ", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+  };
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -83,26 +99,29 @@ export default function SearchInput() {
           <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-30">
             {input.trim().length <= 2 ? null : isLoading ? (
               <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
-                <div className="space-y-3">
-                  <Skeleton variant="text" width="40%" height={20} />
-                  <Skeleton variant="text" width="92%" height={20} />
-                  <Skeleton variant="text" width="78%" height={20} />
-                </div>
-                <div className="mt-4 space-y-3 border-t border-border pt-4">
-                  <Skeleton variant="text" width="52%" height={20} />
-                  <Skeleton variant="text" width="88%" height={20} />
-                  <Skeleton variant="text" width="72%" height={20} />
-                </div>
-                <div className="mt-4 space-y-3 border-t border-border pt-4">
-                  <Skeleton variant="text" width="52%" height={20} />
-                  <Skeleton variant="text" width="88%" height={20} />
-                  <Skeleton variant="text" width="72%" height={20} />
-                </div>
-                <div className="mt-4 space-y-3 border-t border-border pt-4">
-                  <Skeleton variant="text" width="52%" height={20} />
-                  <Skeleton variant="text" width="88%" height={20} />
-                  <Skeleton variant="text" width="72%" height={20} />
-                </div>
+                {[0, 1, 2].map((index) => (
+                  <div
+                    key={index}
+                    className={
+                      index === 0
+                        ? "flex gap-3"
+                        : "mt-4 flex gap-3 border-t border-border pt-4"
+                    }
+                  >
+                    <Skeleton
+                      variant="rectangular"
+                      width={56}
+                      height={80}
+                      sx={{ borderRadius: "8px", flexShrink: 0 }}
+                    />
+                    <div className="w-full space-y-2">
+                      <Skeleton variant="text" width="52%" height={20} />
+                      <Skeleton variant="text" width="88%" height={20} />
+                      <Skeleton variant="text" width="72%" height={20} />
+                      <Skeleton variant="text" width="62%" height={22} />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : error ? (
               <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-[14px] text-red-700 shadow-sm">
@@ -117,16 +136,40 @@ export default function SearchInput() {
                 {result.map((item) => (
                   <div
                     key={item.id}
-                    className="border-b border-border px-4 py-3 last:border-b-0"
+                    className="flex gap-3 border-b border-border px-4 py-3 last:border-b-0"
                   >
-                    <p className="text-[14.5px] font-semibold text-text">
-                      {item.name}
-                    </p>
-                    {item.description ? (
-                      <p className="mt-1 line-clamp-2 text-[13px] text-text-2">
-                        {item.description}
+                    <Image
+                      src={item.media.sourceUrl}
+                      alt={item.name}
+                      width={56}
+                      height={80}
+                      className="h-full w-auto shrink-0 rounded-md object-cover"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-[14.5px] font-semibold text-text">
+                        {item.name}
                       </p>
-                    ) : null}
+                      {item.description ? (
+                        <p className="mt-1 line-clamp-2 text-[13px] text-text-2">
+                          {item.description}
+                        </p>
+                      ) : null}
+                      <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13.5px] text-text">
+                        <span>
+                          {item.place?.city ||
+                            item.place?.company ||
+                            "Unknown location"}
+                        </span>
+                        {item.startAt ? (
+                          <span className="text-border">•</span>
+                        ) : null}
+                        {item.startAt ? (
+                          <span className="whitespace-nowrap">
+                            {formatEventDate(item.startAt)}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
