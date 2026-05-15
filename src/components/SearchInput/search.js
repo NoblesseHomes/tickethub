@@ -143,7 +143,8 @@ export default function SearchInput() {
                       alt={item.name}
                       width={56}
                       height={80}
-                      className="h-full w-auto shrink-0 rounded-md object-cover"
+                      style={{ height: "100%", width: "auto" }}
+                      className="shrink-0 rounded-md object-cover"
                     />
                     <div className="min-w-0">
                       <p className="text-[14.5px] font-semibold text-text">
