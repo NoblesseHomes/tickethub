@@ -151,7 +151,7 @@ export default function SearchInput() {
                   ))}
                 </div>
               ) : error ? (
-                <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-[14px] text-red-700 shadow-sm">
+                <div className="rounded-xl border border-error-border bg-error-soft p-4 text-[14px] text-error-text shadow-sm">
                   {error}
                 </div>
               ) : !hasSearched ? null : result.length === 0 ? (

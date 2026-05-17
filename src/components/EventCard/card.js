@@ -34,7 +34,7 @@ export default function EventCard({ event }) {
   const imageUrl = event?.media?.s3Key;
 
   return (
-    <article className="flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#C7D7EA] hover:shadow-lg">
+    <article className="flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-brand-soft hover:shadow-lg">
       <div className="relative aspect-5/6 shrink-0 overflow-hidden bg-surface sm:aspect-3/4">
         <span className="absolute left-2.5 top-2.5 z-10 rounded-md bg-black/45 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-white sm:left-3 sm:top-3 sm:text-[10.5px]">
           {category}
@@ -48,7 +48,7 @@ export default function EventCard({ event }) {
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-end bg-linear-to-br from-[#1B3A6B] via-brand to-[#2A6FAE] p-3"></div>
+          <div className="flex h-full w-full items-end bg-linear-to-br from-navy via-brand to-brand-hover p-3"></div>
         )}
       </div>
 
@@ -82,7 +82,7 @@ export default function EventCard({ event }) {
 
           <Link
             href={detailsUrl}
-            className="inline-flex items-center gap-1 rounded-lg bg-brand px-2.5 py-1.5 text-[11.5px] font-semibold text-white transition hover:bg-[#053a78] sm:gap-1.5 sm:px-3 sm:py-2 sm:text-[12.5px]"
+            className="inline-flex items-center gap-1 rounded-lg bg-brand px-2.5 py-1.5 text-[11.5px] font-semibold text-white transition hover:bg-brand-hover sm:gap-1.5 sm:px-3 sm:py-2 sm:text-[12.5px]"
           >
             Detail
             <IoChevronForward

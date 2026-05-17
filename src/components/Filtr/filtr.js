@@ -16,7 +16,7 @@ const comboBoxSx = {
       borderColor: "var(--color-border)",
     },
     "&:hover fieldset": {
-      borderColor: "#B7CBE2",
+      borderColor: "var(--color-brand-soft)",
     },
     "&.Mui-focused fieldset": {
       borderColor: "var(--color-brand)",
