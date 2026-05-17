@@ -36,7 +36,7 @@ export default function EventCard({ event }) {
   return (
     <article className="flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#C7D7EA] hover:shadow-lg">
       <div className="relative aspect-5/6 shrink-0 overflow-hidden bg-surface sm:aspect-3/4">
-        <span className="absolute left-2.5 top-2.5 z-50 rounded-md bg-black/45 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-white sm:left-3 sm:top-3 sm:text-[10.5px]">
+        <span className="absolute left-2.5 top-2.5 z-10 rounded-md bg-black/45 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-white sm:left-3 sm:top-3 sm:text-[10.5px]">
           {category}
         </span>
         {imageUrl ? (
