@@ -60,10 +60,10 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="cs" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-screen flex flex-col">
         <FilterProvider value={{ uniqParams: propData }}>
           <Header />
-          {children}
+          <div className="flex-1">{children}</div>
           <Footer />
         </FilterProvider>
       </body>
