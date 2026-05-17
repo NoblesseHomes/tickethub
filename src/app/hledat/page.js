@@ -13,11 +13,18 @@ export default async function Hledat({ searchParams }) {
   const query = typeof params?.query === "string" ? params.query : "";
   const data = await getData(query);
 
+  const h1 = query
+    ? `Výsledky pro dotaz: "${query}"`
+    : "Výsledky vyhledávání";
+  const subtitle = query
+    ? `Nalezeno ${data.length} událostí`
+    : "Zadejte hledaný výraz pro zobrazení výsledků";
+
   return (
     <>
       <SearchInput />
       <Filtr />
-      <Collection data={data} />
+      <Collection data={data} h1Text={h1} subtitle={subtitle} />
     </>
   );
 }
