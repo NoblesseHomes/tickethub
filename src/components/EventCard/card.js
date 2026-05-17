@@ -29,6 +29,7 @@ export default function EventCard({ event }) {
   const venue = event?.place?.company || event?.place?.city || "Neznámé místo";
   const dateLabel = formatEventDate(event?.startAt);
   const category = event?.types?.[0] || event?.themes?.[0] || "Akce";
+  const city = event?.place?.city || "Mesto";
   const detailsUrl = event?.detailsUrl || event?.bookingUrl || "#";
   const price = event?.entranceFee || "Cena bude upřesněna";
   const imageUrl = event?.media?.s3Key;
@@ -36,9 +37,12 @@ export default function EventCard({ event }) {
   return (
     <article className="flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-brand-soft hover:shadow-lg">
       <div className="relative aspect-5/6 shrink-0 overflow-hidden bg-surface sm:aspect-3/4">
-        <span className="absolute left-2.5 top-2.5 z-10 rounded-md bg-black/45 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-white sm:left-3 sm:top-3 sm:text-[10.5px]">
+        {/* <span className="absolute left-2.5 top-2.5 z-10 rounded-md border border-white/35 bg-black/72 px-2 py-1 text-[10px] font-extrabold uppercase tracking-widest text-white shadow-[0_3px_10px_rgba(0,0,0,0.55)] backdrop-blur-[2px] [text-shadow:0_1px_2px_rgba(0,0,0,0.8)] sm:left-3 sm:top-3 sm:text-[10.5px]">
           {category}
         </span>
+        <span className="absolute right-2.5 bottom-2.5 z-10 rounded-md border border-white/35 bg-black/72 px-2 py-1 text-[10px] font-extrabold uppercase tracking-widest text-white shadow-[0_3px_10px_rgba(0,0,0,0.55)] backdrop-blur-[2px] [text-shadow:0_1px_2px_rgba(0,0,0,0.8)] sm:right-3 sm:bottom-3 sm:text-[10.5px]">
+          {city}
+        </span> */}
         {imageUrl ? (
           <Image
             src={R2_BASE_URL + imageUrl}
@@ -67,7 +71,9 @@ export default function EventCard({ event }) {
 
         <p className="flex items-center gap-1.5 text-[11.5px] text-text-2 sm:text-[12.5px]">
           <IoLocationOutline className="h-3 w-3 shrink-0" aria-hidden="true" />
-          <span className="line-clamp-1">{venue}</span>
+          <span className="line-clamp-1">
+            {venue}, {city}
+          </span>
         </p>
 
         <div className="mt-auto flex items-end justify-between gap-2 border-t border-dashed border-border pt-2.5 sm:pt-3">
