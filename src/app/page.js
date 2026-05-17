@@ -58,7 +58,7 @@ export default async function Home() {
             className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 sm:mt-5"
             aria-live="polite"
           >
-            {data.map((item) => (
+            {data.slice(0, 20).map((item) => (
               <EventCard key={item.id} event={item} />
             ))}
           </div>
