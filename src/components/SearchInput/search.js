@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { IoSearchOutline, IoCloseSharp } from "react-icons/io5";
 import Skeleton from "@mui/material/Skeleton";
@@ -14,6 +15,8 @@ export default function SearchInput() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [inputIsFocused, setInputIsFocused] = useState(false);
+
+  const router = useRouter();
 
   const trimmedInput = input.trim();
   const canSearch = trimmedInput.length >= MIN_QUERY_LENGTH;
@@ -32,6 +35,12 @@ export default function SearchInput() {
       hour: "2-digit",
       minute: "2-digit",
     }).format(date);
+  };
+
+  const handleEnter = (e) => {
+    if (e.key !== "Enter") return;
+
+    router.push(`/hledat?query=${encodeURIComponent(trimmedInput)}`);
   };
 
   const handleInputChange = (e) => {
@@ -107,6 +116,7 @@ export default function SearchInput() {
                 onChange={handleInputChange}
                 onFocus={() => setInputIsFocused(true)}
                 onBlur={() => setInputIsFocused(false)}
+                onKeyUp={handleEnter}
                 value={input}
                 placeholder="Hledejte akce, umělce, místa…"
                 className="h-full flex-1 bg-transparent text-[15px] text-text outline-none placeholder:text-text-2 sm:text-[15.5px]"
