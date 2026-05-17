@@ -36,10 +36,12 @@ export default async function Home() {
     types: uniqTypes,
     theme: uniqThemes,
   };
+
   return (
-    <>
+    <main>
+      <h1 className="sr-only">TicketHub - vyhledávání a filtrování akcí</h1>
       <SearchInput />
       <Filtr data={propData} />
-    </>
+    </main>
   );
 }

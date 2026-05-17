@@ -35,7 +35,7 @@ const Header = () => {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="cs" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Header />
         {children}
