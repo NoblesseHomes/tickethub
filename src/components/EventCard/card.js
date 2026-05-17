@@ -89,6 +89,8 @@ export default function EventCard({ event }) {
           <Link
             href={detailsUrl}
             className="inline-flex items-center gap-1 rounded-lg bg-brand px-2.5 py-1.5 text-[11.5px] font-semibold text-white transition hover:bg-brand-hover sm:gap-1.5 sm:px-3 sm:py-2 sm:text-[12.5px]"
+            target="_blank"
+            rel="noopener"
           >
             Detail
             <IoChevronForward
