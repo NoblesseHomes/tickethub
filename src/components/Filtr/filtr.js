@@ -4,12 +4,6 @@ import { useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 
-const filterData = {
-  city: ["Prague", "Brno", "Ostrava", "Plzen"],
-  type: ["Concert", "Festival", "Theater", "Sport"],
-  genre: ["Rock", "Pop", "Electronic", "Hip-Hop", "Jazz"],
-};
-
 const comboBoxSx = {
   "& .MuiOutlinedInput-root": {
     height: 40,
@@ -37,7 +31,7 @@ const comboBoxSx = {
   },
 };
 
-export default function Filtr() {
+export default function Filtr({ data }) {
   const [selected, setSelected] = useState({
     city: null,
     type: null,
@@ -65,7 +59,7 @@ export default function Filtr() {
 
         <div className="w-full sm:w-55">
           <Autocomplete
-            options={filterData.city}
+            options={data?.location ?? []}
             value={selected.city}
             onChange={(_, value) =>
               setSelected((prev) => ({ ...prev, city: value || null }))
@@ -82,7 +76,7 @@ export default function Filtr() {
 
         <div className="w-full sm:w-55">
           <Autocomplete
-            options={filterData.type}
+            options={data?.types ?? []}
             value={selected.type}
             onChange={(_, value) =>
               setSelected((prev) => ({ ...prev, type: value || null }))
@@ -99,7 +93,7 @@ export default function Filtr() {
 
         <div className="w-full sm:w-55">
           <Autocomplete
-            options={filterData.genre}
+            options={data?.theme ?? []}
             value={selected.genre}
             onChange={(_, value) =>
               setSelected((prev) => ({ ...prev, genre: value || null }))
