@@ -40,6 +40,8 @@ export default function SearchInput() {
   const handleEnter = (e) => {
     if (e.key !== "Enter") return;
 
+    e.currentTarget.blur();
+
     router.push(`/hledat?query=${encodeURIComponent(trimmedInput)}`);
   };
 
