@@ -25,26 +25,26 @@ const getData = cache(async () => {
 export default async function Home() {
   const data = await getData();
 
-  const uniqLocation = [
-    ...new Set(data.map((item) => item?.place?.city).filter(Boolean)),
-  ];
-  const uniqTypes = [
-    ...new Set(data.flatMap((item) => item?.types ?? []).filter(Boolean)),
-  ];
-  const uniqThemes = [
-    ...new Set(data.flatMap((item) => item?.themes ?? []).filter(Boolean)),
-  ];
+  // const uniqLocation = [
+  //   ...new Set(data.map((item) => item?.place?.city).filter(Boolean)),
+  // ];
+  // const uniqTypes = [
+  //   ...new Set(data.flatMap((item) => item?.types ?? []).filter(Boolean)),
+  // ];
+  // const uniqThemes = [
+  //   ...new Set(data.flatMap((item) => item?.themes ?? []).filter(Boolean)),
+  // ];
 
-  const propData = {
-    location: uniqLocation,
-    types: uniqTypes,
-    theme: uniqThemes,
-  };
+  // const propData = {
+  //   location: uniqLocation,
+  //   types: uniqTypes,
+  //   theme: uniqThemes,
+  // };
 
   return (
     <main>
       <SearchInput />
-      <Filtr data={propData} />
+      <Filtr />
       <Collection data={data} />
       <div className="mx-auto flex w-full max-w-340 justify-center px-4 sm:px-8">
         <Link
